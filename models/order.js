@@ -46,10 +46,9 @@ const orderShema = mongoose.Schema({
                 type:String,
                 required:true
                },
-               altName:{
-                type:String,
-                required:true
-               },
+               altName:[{
+                type:String
+               }],
                description:{
                 type:String,
                 required:true
@@ -70,7 +69,7 @@ const orderShema = mongoose.Schema({
             quantity:{
                 type:Number,
                 required:true
-            }
+            },
         }
     ],
     date:{

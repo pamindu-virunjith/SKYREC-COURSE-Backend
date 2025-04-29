@@ -1,4 +1,5 @@
 import Order from "../models/order.js"
+import Product from "../models/products.js"
 
 export async function crateOrder(req,res){
     //get user information
@@ -28,20 +29,57 @@ export async function crateOrder(req,res){
         const newNumberString = String(newOrderNmber).padStart(5,'0')
         orderId = "CBC" + newNumberString//"CBC00551"
     }
-
-    const order = new Order({
-        orderId : orderId,
-        email: req.user.email,
-        name: orderInfo.name,
-        phone: orderInfo.phone,
-        address: orderInfo.address,
-        total:0,
-        products:[]
-    })
-
-
     try{
-        const createdOrder= await order.save()
+        let total = 0;
+        let labeledTotal = 0;
+        const products=[]
+
+        for(let i=0; i < orderInfo.products.length; i++){
+
+            const item = await Product.findOne({productId : orderInfo.products[i].productId})
+
+            if(item == null){
+                res.status(404).json({
+                    message : "your Product" + "(" + orderInfo.products[i].productId + ")" + "is not found",
+                })
+                return
+            }
+
+            if(item.isAvailable == false){
+                res.status(404).json({
+                    message : "your Product" + "(" + orderInfo.products[i].productId + ")" + "is not Available right now",
+                })
+                return
+            }
+
+            products[i]={
+                productInfo:{
+                    productId : item.productId,
+                    name: item.name,
+                    altName: item.altName,
+                    description: item.description,
+                    images : item.images,
+                    labledPrice: item.labledPrice,
+                    price: item.price
+                },
+                quantity : orderInfo.products[i].quantity   
+            }
+            total += (item.price * orderInfo.products[i].quantity)
+            labeledTotal += (item.labledPrice * orderInfo.products[i].quantity)
+        }
+
+        const order = new Order({
+            orderId : orderId,
+            email: req.user.email,
+            name: orderInfo.name,
+            phone: orderInfo.phone,
+            address: orderInfo.address,
+            total:0,
+            products: products,
+            total : total,
+            labeledTotal : labeledTotal
+        })
+        const createdOrder = await order.save()
 
         res.json({
             message: "Oder created successfully",
@@ -50,9 +88,11 @@ export async function crateOrder(req,res){
 
     }catch(err){
         res.status(500).json({
-            message: "Failed to crate order",
+            message: "Failed to cerate order",
             error: err
         })
+
+        console.log(err)
     }
 
        
