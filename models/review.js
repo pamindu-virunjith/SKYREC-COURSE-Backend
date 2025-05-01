@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 
 const reviewSchema = mongoose.Schema({
-    reviewId:{
+    reviewerName:{
         type:String,
-        required:true,
-        unique:true
+        required: true,
     },
     reviewDescription:{
         type:String,
@@ -17,7 +16,10 @@ const reviewSchema = mongoose.Schema({
     image:{
         type: String,
         reqiured: true,
-        default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqf0Wx4wmsKfLYsiLdBx6H4D8bwQBurWhx5g&s"
     }
 
 })
+
+const Review = mongoose.model("reviews",reviewSchema)
+
+export default Review;
