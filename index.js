@@ -23,7 +23,7 @@ app.use(
       const token = tokekString.replace("Bearer ","")
       // console.log(token)
 
-      twt.verify(token,"cbc-batch-five#@2025", 
+      twt.verify(token,process.env.JWT_KEY, 
         (err,decoded)=>{
           if(decoded != null){
             req.user = decoded
