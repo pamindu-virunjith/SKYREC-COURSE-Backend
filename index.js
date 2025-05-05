@@ -7,13 +7,12 @@ import twt from "jsonwebtoken"
 import orderRouter from "./routers/orderRouter.js";
 import reviewRouter from "./routers/reviewRouter.js";
 import cors from 'cors'
+import dotenv from 'dotenv'
+dotenv.config()
 
 let app = express();
 
 app.use(cors())
-
-const connectionString =
-  "mongodb+srv://admin:123@cluster0.ckchf0f.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 app.use(bodyParser.json());
 
@@ -48,15 +47,16 @@ app.use(
 
 
 mongoose
-  .connect(connectionString)
+  .connect(process.env.MOGODB_URL)
   .then(() => {
     console.log("Connected to the Database");
   })
-  .catch(() => {
+  .catch((e) => {
     console.log("Database connnection is failed");
+    console.log(e)
   });
 
-app.use("/api/api/products", productRouters);
+app.use("/api/products", productRouters);
 app.use("/api/users", userRouter);
 app.use("/api/orders",orderRouter)
 app.use("/api/review", reviewRouter)
