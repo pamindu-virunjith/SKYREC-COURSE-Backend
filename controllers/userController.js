@@ -80,7 +80,8 @@ export function loginUser(req,res){
 
           res.json({
             message:"Login Successfully!!",
-            token : token
+            token : token,
+            role: user.role
           })
         }else{
           res.status(401).json({
