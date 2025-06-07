@@ -94,9 +94,33 @@ export async function crateOrder(req,res){
 
         console.log(err)
     }
-
-       
     //add current users name if not provieded
     //orderId generate
     //create order object
+}
+
+
+export async function getOrders(req,res){
+    if(req.user == null){
+        res.status(403).json({
+            message : "please login and try again"
+        })
+        return
+    }
+
+    try{
+        if(req.user.role == "admin"){
+            const orders = await Order.find()
+            res.json(orders)
+        }else{
+            const orders = await Order.find({email:req.body.email})
+            res.json(orders)
+        }
+
+    }catch(err){
+        res.status(500).json({
+            message:"Failed to fetch Orders",
+            error: err
+        })
+    }
 }
