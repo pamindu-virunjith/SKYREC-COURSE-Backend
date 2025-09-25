@@ -174,6 +174,7 @@ const transport = nodemailer.createTransport({
     pass: process.env.APP_PASSWORD
   }
 })
+
 export async function sendOTP(req,res){
   const rendomOTP = Math.floor(100000 + Math.random()* 900000)
   const email = req.body.email
@@ -226,6 +227,35 @@ export async function sendOTP(req,res){
       })
     }
   })
+}
+
+export async function sendEmailToAdmin(req,res){
+  try{
+    const name = req.body.name;
+    const email = req.body.email
+    const subject = req.body.subject;
+    const message = req.body.message;
+
+    const massageSend = {
+      from: email,
+      to: "paminduvirunjith2002@gmail.com",
+      subject: subject,
+      text: `You have received a new message form the customer of the CBC Web Application:\n\nFrom: ${name} <${email}>\n\nMessage:\n${message}`,
+    }
+
+    await transport.sendMail(massageSend);
+
+    res.status(200).json({
+      message: "Email sent successfully"
+    })
+
+
+  }catch(err){
+    res.status(500).json({
+      message: "Failed to send Email",
+      error : err.message 
+    })
+  }
 }
 
 export async function resetPassword(req, res) {
