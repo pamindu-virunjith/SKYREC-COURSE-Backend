@@ -23,7 +23,7 @@ app.use(
       const token = tokekString.replace("Bearer ","")
       // console.log(token)
 
-      twt.verify(token,process.env.JWT_KEY, 
+      twt.verify(token,process.env.JWT_KEY,
         (err,decoded)=>{
           if(decoded != null){
             req.user = decoded
@@ -51,6 +51,7 @@ mongoose
   .then(() => {
     console.log("Connected to the Database");
   })
+  
   .catch((e) => {
     console.log("Database connnection is failed");
     console.log(e)

@@ -283,6 +283,47 @@ export function getUser(req,res){
   }
 }
 
+export function getAllUsers(req,res){
+  if(!isAdmin(req)){
+    res.status(403).json({
+      message: "You are not authorized to view all user details."
+    })
+    return
+  }
+  User.find().then(
+    (users)=>{
+      res.json({
+        users: users
+      })
+    }
+  )
+}
+
+// Delete user using _id
+export async function deleteUser(req,res){
+  if(!isAdmin(req)){
+    res.status(403).json({
+      message:"You are not authorized to delete Users"
+    })
+    return
+  }
+  try{
+    const deleted = await User.findByIdAndDelete(req.params.userId)
+    if (!deleted) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      message:"User deleted successfully"
+    })
+
+  }catch(err){
+    res.status(500).json({
+      message: "Failes to delete User",
+      error: err
+    })
+  }
+}
+
 export function isAdmin(req){
   if(req.user == null){
     return false
