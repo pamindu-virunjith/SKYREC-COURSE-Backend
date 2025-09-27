@@ -72,6 +72,7 @@ export function loginUser(req,res){
         if(isPasswordCorrect){
           const token = jwt.sign(
             {
+              _id: user._id,
               email: user.email,
               firstName : user.firstName,
               lastName: user.lastName,
@@ -131,6 +132,7 @@ export async function loginWithGoole(req,res){
     await newUser.save()
     const token = jwt.sign(
             {
+              _id: newUser._id,
               email: newUser.email,
               firstName : newUser.firstName,
               lastName: newUser.lastName,
@@ -148,6 +150,7 @@ export async function loginWithGoole(req,res){
   }else{
     const token = jwt.sign(
             {
+              _id: user._id,
               email: user.email,
               firstName : user.firstName,
               lastName: user.lastName,
