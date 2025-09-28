@@ -254,6 +254,7 @@ export async function sendEmailToAdmin(req,res){
 
 
   }catch(err){
+    console.log("Email error",err)
     res.status(500).json({
       message: "Failed to send Email",
       error : err.message 
