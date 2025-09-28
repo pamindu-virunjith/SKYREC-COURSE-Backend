@@ -36,7 +36,17 @@ const productSchema = mongoose.Schema({
     type:Boolean,
     required: true,
     default: true
-  }
+  },
+  averageRating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  numReviews: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 });
 
 const Product = mongoose.model("products", productSchema);

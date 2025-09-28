@@ -72,6 +72,7 @@ export function loginUser(req,res){
         if(isPasswordCorrect){
           const token = jwt.sign(
             {
+              _id: user._id,
               email: user.email,
               firstName : user.firstName,
               lastName: user.lastName,
@@ -131,6 +132,7 @@ export async function loginWithGoole(req,res){
     await newUser.save()
     const token = jwt.sign(
             {
+              _id: newUser._id,
               email: newUser.email,
               firstName : newUser.firstName,
               lastName: newUser.lastName,
@@ -148,6 +150,7 @@ export async function loginWithGoole(req,res){
   }else{
     const token = jwt.sign(
             {
+              _id: user._id,
               email: user.email,
               firstName : user.firstName,
               lastName: user.lastName,
@@ -174,6 +177,7 @@ const transport = nodemailer.createTransport({
     pass: process.env.APP_PASSWORD
   }
 })
+
 export async function sendOTP(req,res){
   const rendomOTP = Math.floor(100000 + Math.random()* 900000)
   const email = req.body.email
@@ -228,6 +232,35 @@ export async function sendOTP(req,res){
   })
 }
 
+export async function sendEmailToAdmin(req,res){
+  try{
+    const name = req.body.name;
+    const email = req.body.email
+    const subject = req.body.subject;
+    const message = req.body.message;
+
+    const massageSend = {
+      from: email,
+      to: "paminduvirunjith2002@gmail.com",
+      subject: subject,
+      text: `You have received a new message form the customer of the CBC Web Application:\n\nFrom: ${name} <${email}>\n\nMessage:\n${message}`,
+    }
+
+    await transport.sendMail(massageSend);
+
+    res.status(200).json({
+      message: "Email sent successfully"
+    })
+
+
+  }catch(err){
+    res.status(500).json({
+      message: "Failed to send Email",
+      error : err.message 
+    })
+  }
+}
+
 export async function resetPassword(req, res) {
   const otp = req.body.otp
   const email = req.body.email
@@ -279,6 +312,47 @@ export function getUser(req,res){
   }else{
     res.json({
       ...req.user
+    })
+  }
+}
+
+export function getAllUsers(req,res){
+  if(!isAdmin(req)){
+    res.status(403).json({
+      message: "You are not authorized to view all user details."
+    })
+    return
+  }
+  User.find().then(
+    (users)=>{
+      res.json({
+        users: users
+      })
+    }
+  )
+}
+
+// Delete user using _id
+export async function deleteUser(req,res){
+  if(!isAdmin(req)){
+    res.status(403).json({
+      message:"You are not authorized to delete Users"
+    })
+    return
+  }
+  try{
+    const deleted = await User.findByIdAndDelete(req.params.userId)
+    if (!deleted) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      message:"User deleted successfully"
+    })
+
+  }catch(err){
+    res.status(500).json({
+      message: "Failes to delete User",
+      error: err
     })
   }
 }

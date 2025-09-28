@@ -3,9 +3,9 @@ import { createReview, deleteReview, getReviews, updateReview } from '../control
 
 const reviewRouter = express.Router();
 
-reviewRouter.post("/",createReview)
-reviewRouter.get("/",getReviews)
+reviewRouter.post("/:productId",createReview)
+reviewRouter.get("/:productId",getReviews)
 reviewRouter.put("/:reviewId",updateReview)
-reviewRouter.delete("/",deleteReview)
+reviewRouter.delete("/:reviewId",deleteReview)
 
 export default reviewRouter;
